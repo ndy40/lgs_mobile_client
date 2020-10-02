@@ -1,8 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 const primaryColour = 0xFF58C69D;
 
 const secondaryColourLight = 0xFF96F6C6;
+
+const lgsPrimaryColour = Color(primaryColour);
+
+const lgsSecondaryColour = Color(secondaryColourLight);
 
 const primaryColourSwatch = MaterialColor(primaryColour, <int, Color>{
   50: Color(0xFFE1FEEF),
@@ -29,3 +35,6 @@ const secondaryColourSwatch = MaterialColor(secondaryColourLight, <int, Color>{
   800: Color(0xFF000046),
   900: Color(0xFF000027)
 });
+
+const appTextOnSecondary = TextStyle(
+    color: Colors.white, fontSize: 12.0, fontWeight: FontWeight.normal);

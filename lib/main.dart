@@ -1,19 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:lgs_mobile_client/screens/register.dart';
+import 'package:lgs_mobile_client/providers/auth.dart';
+import 'package:lgs_mobile_client/routes.dart';
+import 'package:lgs_mobile_client/screens/login_screen.dart';
+import 'package:lgs_mobile_client/screens/register_screen.dart';
+import 'package:lgs_mobile_client/services/local_storage.dart';
 import 'package:lgs_mobile_client/themes.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => AuthProvider(),
+      ),
+      ChangeNotifierProvider(create: (context) => UserProvider())
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
+  Future<String> getToken() => UserPreference().getToken();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: appTheme,
-      home: RegisterScreen(),
+      routes: routes,
+      home: FutureBuilder(
+        future: getToken(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return CircularProgressIndicator();
+            default:
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.data != null) {
+                return LoginScreen();
+              } else {
+                UserPreference().removeUser();
+              }
+
+              return RegisterScreen();
+          }
+        },
+      ),
     );
   }
 }
