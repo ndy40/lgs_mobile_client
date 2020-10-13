@@ -1,3 +1,1 @@
-class AppConstants {
-  static final appName = 'Lets Go Shopping';
-}
+final appName = 'Lets Go Shopping';
