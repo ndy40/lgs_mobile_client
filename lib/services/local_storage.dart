@@ -39,19 +39,26 @@ class UserPreference {
     preferences.setString('refreshToken', token.refreshToken);
   }
 
-  Future<String> getToken() async {
-    try {
-      final SharedPreferences preferences =
-          await SharedPreferences.getInstance();
-      return preferences.getString('token');
-    } catch (e) {
-      return null;
-    }
+  Future<String> getAccessToken() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('token');
   }
 
-  void clearToken() async {
+  Future<Token> getToken() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return Token(
+        token: preferences.getString('token'),
+        refreshToken: preferences.getString('refreshToken'));
+  }
+
+  removeToken() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove('token');
     preferences.remove('refreshToken');
+  }
+
+  clear() async {
+    removeUser();
+    removeToken();
   }
 }

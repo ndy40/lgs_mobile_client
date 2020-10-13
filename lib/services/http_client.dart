@@ -13,7 +13,7 @@ final BaseOptions _defaultOption = BaseOptions(
 class _AuthTokenInterceptor extends InterceptorsWrapper {
   @override
   Future onRequest(RequestOptions options) {
-    final token = UserPreference().getToken();
+    final token = UserPreference().getAccessToken();
     const pathPattern = r"docs|authentication_token|register|refresh_token";
 
     token.whenComplete(() {

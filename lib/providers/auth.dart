@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
@@ -9,6 +7,7 @@ import 'package:lgs_mobile_client/services/local_storage.dart';
 
 const _loginPath = '/authentication_token';
 const _registrationPath = '/api/users/register';
+const _refreshToken = '/refresh_token';
 
 enum Status {
   Registered,
@@ -43,9 +42,7 @@ class AuthProvider extends ChangeNotifier {
         "password": loginModel.password
       });
 
-      final data = json.decode(response.data);
-
-      _token = Token.fromJson(data);
+      _token = Token.fromJson(response.data);
 
       _loggedInStatus = Status.LoggedIn;
 
@@ -63,7 +60,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final response = await ApiClient.instance()
           .post(_registrationPath, data: model.getJson());
-      final data = json.decode(response.data);
+      final data = response.data;
       _user = User(
           id: data['id'],
           email: data['email'],
@@ -76,6 +73,22 @@ class AuthProvider extends ChangeNotifier {
     }
     notifyListeners();
     return _registerStatus;
+  }
+
+  refreshToken(String refreshToken) async {
+    try {
+      final response = await ApiClient.instance()
+          .post(_refreshToken, data: {"refresh_token": refreshToken});
+      final data = response.data;
+      _token = Token.fromJson(data);
+      _loggedInStatus = Status.LoggedIn;
+      UserPreference().saveToken(_token);
+    } on DioError catch (e) {
+      _loggedInStatus = Status.NotLoggedIn;
+      setError(e);
+    }
+
+    notifyListeners();
   }
 
   setError(DioError e) {

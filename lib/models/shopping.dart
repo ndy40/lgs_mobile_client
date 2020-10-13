@@ -33,7 +33,34 @@ class ShoppingList {
   int id;
   String status;
   String channelId;
-  List<ShoppingItem> shoppingItems = List<ShoppingItem>();
+  String title;
+  String owner;
+  DateTime createdAt;
+  DateTime updatedAt;
 
-  ShoppingList({int id, String status, String channelId, this.shoppingItems});
+  List<ShoppingItem> shoppingItems;
+
+  ShoppingList(
+      {this.id,
+      this.title,
+      this.status,
+      this.channelId,
+      this.owner,
+      this.shoppingItems,
+      this.createdAt,
+      this.updatedAt});
+
+  factory ShoppingList.fromJson(Map<String, dynamic> data) {
+    return ShoppingList(
+        id: data['id'],
+        title: data['title'],
+        channelId: data['channelId'],
+        owner: data['owner'],
+        createdAt: DateTime.parse(data['createdAt']),
+        updatedAt: DateTime.parse(data['updatedAt']),
+        shoppingItems: [
+          for (var shoppingItem in data['shoppingItems'])
+            ShoppingItem.fromJson(shoppingItem)
+        ]);
+  }
 }

@@ -7,7 +7,7 @@ class Token {
 
   Token({@required this.token, @required this.refreshToken});
 
-  factory Token.fromJson(Map<String, String> data) {
+  factory Token.fromJson(Map<String, dynamic> data) {
     return Token(token: data['token'], refreshToken: data['refresh_token']);
   }
 }
@@ -43,7 +43,7 @@ class LoginModel {
   String email;
   String password;
 
-  Map<String, String> get json => {"email": email, "password": password};
+  Map<String, dynamic> get json => {"email": email, "password": password};
 
   LoginModel({this.email, this.password});
 }

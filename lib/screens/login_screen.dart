@@ -32,6 +32,13 @@ class _LoginFormState extends State<LoginForm> {
   final passwordController = TextEditingController();
 
   @override
+  void initState() {
+    if (Provider.of<UserProvider>(context, listen: false).user.id != null) {
+      pushShoppingScreen();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffold,
@@ -96,7 +103,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  loginUser() {
+  loginUser() async {
     try {
       final loginModel = LoginModel(
           email: emailController.text.trim(),
@@ -107,19 +114,18 @@ class _LoginFormState extends State<LoginForm> {
       showSnackBar(_scaffold, message: "Processing...");
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final loginStatus = authProvider.signIn(loginModel);
+      await authProvider.signIn(loginModel);
 
-      switch (loginStatus) {
+      switch (authProvider.loggedInStatus) {
         case Status.LoggedIn:
           _formKey.currentState.reset();
-
           final userProvider =
               Provider.of<UserProvider>(context, listen: false);
 
           userProvider.setUser(authProvider.user);
           userProvider.setToken(authProvider.token);
 
-          Navigator.pushNamed(context, ShoppingListScreen.routeName);
+          pushShoppingScreen();
           break;
         default:
           showSnackBar(_scaffold,
@@ -135,5 +141,12 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     return null;
+  }
+
+  pushShoppingScreen() {
+    Navigator.pushReplacementNamed(
+      context,
+      ShoppingListScreen.routeName,
+    );
   }
 }

@@ -134,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _submit() {
+  void _submit() async {
     final user = RegistrationModel(
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
@@ -142,9 +142,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: passwordController.text.trim());
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final status = authProvider.signUp(user);
+    await authProvider.signUp(user);
 
-    switch (status) {
+    switch (authProvider.registerStatus) {
       case Status.Registered:
         _formKey.currentState.reset();
 
