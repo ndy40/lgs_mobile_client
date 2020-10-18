@@ -61,6 +61,7 @@ class UserController extends GetxController {
     if (!await Get.find<UserPreference>().saveUser(user)) {
       throw Exception("Error saving user");
     }
+
     _user.value = user;
   }
 
@@ -68,6 +69,8 @@ class UserController extends GetxController {
     if (!await Get.find<UserPreference>().saveToken(token)) {
       throw Exception('Error saving token');
     }
+
+    _token.value = token;
   }
 
   clear() {

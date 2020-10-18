@@ -87,6 +87,8 @@ class UserPreference extends GetxService {
 
     preferences.setString('token', token.token);
     preferences.setString('refreshToken', token.refreshToken);
+
+    return true;
   }
 
   Future<String> getAccessToken() async {
