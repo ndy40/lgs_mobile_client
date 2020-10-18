@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ErrorMessage {
-  Map<dynamic, dynamic> _data;
+  Map<String, dynamic> _data;
 
   String get context => _data['@context'];
   String get type => _data['@type'];

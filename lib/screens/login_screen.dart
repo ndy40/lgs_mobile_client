@@ -1,42 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
 import 'package:lgs_mobile_client/common/widgets.dart';
+import 'package:lgs_mobile_client/controllers/auth_controller.dart';
 import 'package:lgs_mobile_client/models/auth.dart';
 import 'package:lgs_mobile_client/providers/auth.dart';
 import 'package:lgs_mobile_client/screens/register_screen.dart';
+import 'package:lgs_mobile_client/screens/reset_password_screen.dart';
 import 'package:lgs_mobile_client/screens/shopping_list_screen.dart';
 import 'package:lgs_mobile_client/styles.dart';
-import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends GetWidget<AuthController> {
   static const routeName = '/login';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: LoginForm());
-  }
-}
-
-class LoginForm extends StatefulWidget {
-  @override
-  _LoginFormState createState() => _LoginFormState();
-}
-
-class _LoginFormState extends State<LoginForm> {
-  final _formKey = GlobalKey<FormState>();
-  final _scaffold = GlobalKey<ScaffoldState>();
-  final LoginModel loginModel = new LoginModel();
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  @override
-  void initState() {
-    if (Provider.of<UserProvider>(context, listen: false).user.id != null) {
-      pushShoppingScreen();
-    }
-  }
+  final _formKey = GlobalKey<FormState>();
+  final _scaffold = GlobalKey<ScaffoldState>();
+  final LoginModel loginModel = new LoginModel();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +39,7 @@ class _LoginFormState extends State<LoginForm> {
   buildLoginForm() {
     return Container(
       padding: EdgeInsets.all(15.0),
-      child: Column(children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         TextFormField(
           controller: this.emailController,
           decoration: InputDecoration(
@@ -78,7 +61,24 @@ class _LoginFormState extends State<LoginForm> {
           ),
           validator: (value) => checkNotEmpty(value, 'Password'),
         ),
-        spaceSizeBox(),
+        SizedBox(
+          height: 15.0,
+        ),
+        Row(
+          children: [
+            FlatButton(
+              padding: EdgeInsets.only(left: 0.0),
+              child: Text(
+                'Forgot password?',
+                style: TextStyle(color: Colors.grey),
+              ),
+              onPressed: () {
+                Get.toNamed(ResetPasswordScreen.routeName);
+              },
+            )
+          ],
+        ),
+        spaceSizeBox(height: 15.4),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -94,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
             TextButton(
               child: Text('Register'),
               onPressed: () {
-                Navigator.pushNamed(context, RegistrationScreen.routeName);
+                Get.toNamed(RegistrationScreen.routeName);
               },
             )
           ],
@@ -113,24 +113,20 @@ class _LoginFormState extends State<LoginForm> {
 
       showSnackBar(_scaffold, message: "Processing...");
 
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.signIn(loginModel);
+      await controller.signIn(loginModel);
+      UserController userController = Get.find<UserController>();
 
-      switch (authProvider.loggedInStatus) {
+      switch (userController.status) {
         case Status.LoggedIn:
           _formKey.currentState.reset();
-          final userProvider =
-              Provider.of<UserProvider>(context, listen: false);
-
-          userProvider.setUser(authProvider.user);
-          userProvider.setToken(authProvider.token);
-
-          pushShoppingScreen();
+          Get.toNamed(ShoppingListScreen.routeName);
           break;
         default:
-          showSnackBar(_scaffold,
-              message: authProvider.errors.description,
-              type: MessageType.error);
+          Get.showSnackbar(GetBar(
+            title: 'Login Error',
+            message: 'Login failed',
+            duration: Duration(seconds: 5),
+          ));
       }
     } catch (e) {}
   }
@@ -141,12 +137,5 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     return null;
-  }
-
-  pushShoppingScreen() {
-    Navigator.pushReplacementNamed(
-      context,
-      ShoppingListScreen.routeName,
-    );
   }
 }

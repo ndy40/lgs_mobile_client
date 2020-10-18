@@ -10,7 +10,7 @@ RaisedButton appRaisedButton(String text, Function callback,
   return RaisedButton(
     color: secondaryColourSwatch[200],
     onPressed: callback,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     child: Text(
       text,
       style: textStyle,

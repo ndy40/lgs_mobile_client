@@ -1,7 +1,57 @@
+import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/services/http_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserPreference {
+class AuthService extends GetxService {
+  final _loginPath = '/authentication_token';
+
+  final _refreshToken = '/refresh_token';
+
+  final _registrationPath = '/api/users/register';
+
+  final _resetPassword = '/api/users/reset_password';
+
+  final ApiClient apiClient;
+
+  AuthService({this.apiClient});
+
+  static AuthService init() {
+    return AuthService(apiClient: ApiClient());
+  }
+
+  Future<Token> signIn(LoginModel login) async {
+    final payload = {'username': login.email, 'password': login.password};
+    final response = await apiClient.post(_loginPath, data: payload);
+
+    return Token.fromJson(response.data);
+  }
+
+  Future<User> register(RegistrationModel model) async {
+    final response =
+        await apiClient.post(_registrationPath, data: model.getJson());
+    return User.fromJson(response.data);
+  }
+
+  Future<Token> refreshToken(String refreshToken) async {
+    final response = await apiClient
+        .post(_refreshToken, data: {'refreshToken': refreshToken});
+    return Token.fromJson(response.data);
+  }
+
+  resetPassword(String email) async {
+    Response response =
+        await apiClient.post(_resetPassword, data: {'email': email});
+    return response.statusCode == 204;
+  }
+}
+
+class UserPreference extends GetxService {
+  Future<UserPreference> init() async {
+    return this;
+  }
+
   Future<bool> saveUser(User user) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -57,7 +107,7 @@ class UserPreference {
     preferences.remove('refreshToken');
   }
 
-  clear() async {
+  Future<void> clear() async {
     removeUser();
     removeToken();
   }

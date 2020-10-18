@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 
 class Token {
-  final String token;
-  final String refreshToken;
+  String token;
+  String refreshToken;
 
   Token({@required this.token, @required this.refreshToken});
 
@@ -19,6 +19,16 @@ class User {
   String lastName;
 
   User({int id, email, String firstName, String lastName});
+
+  factory User.fromJson(Map<String, dynamic> data) {
+    return User(
+        id: int.parse(data['id']),
+        email: data['email'],
+        firstName: data['firstName'],
+        lastName: data['lastName']);
+  }
+
+  bool get isEmpty => id == null;
 }
 
 class RegistrationModel {
@@ -43,7 +53,7 @@ class LoginModel {
   String email;
   String password;
 
-  Map<String, dynamic> get json => {"email": email, "password": password};
+  Map<String, dynamic> toJson() => {"email": email, "password": password};
 
   LoginModel({this.email, this.password});
 }

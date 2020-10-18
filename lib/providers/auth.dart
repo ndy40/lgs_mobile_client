@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
 import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/services/auth_services.dart';
 import 'package:lgs_mobile_client/services/http_client.dart';
-import 'package:lgs_mobile_client/services/local_storage.dart';
 
 const _loginPath = '/authentication_token';
 const _registrationPath = '/api/users/register';
@@ -37,7 +38,7 @@ class AuthProvider extends ChangeNotifier {
 
   signIn(LoginModel loginModel) async {
     try {
-      final response = await ApiClient.instance().post(_loginPath, data: {
+      final response = await ApiClient().post(_loginPath, data: {
         "username": loginModel.email,
         "password": loginModel.password
       });
@@ -46,7 +47,7 @@ class AuthProvider extends ChangeNotifier {
 
       _loggedInStatus = Status.LoggedIn;
 
-      UserPreference().saveToken(token);
+      Get.find<UserPreference>().saveToken(token);
     } on DioError catch (e) {
       _loggedInStatus = Status.NotLoggedIn;
       setError(e);
@@ -58,8 +59,8 @@ class AuthProvider extends ChangeNotifier {
 
   signUp(RegistrationModel model) async {
     try {
-      final response = await ApiClient.instance()
-          .post(_registrationPath, data: model.getJson());
+      final response =
+          await ApiClient().post(_registrationPath, data: model.getJson());
       final data = response.data;
       _user = User(
           id: data['id'],
@@ -77,12 +78,12 @@ class AuthProvider extends ChangeNotifier {
 
   refreshToken(String refreshToken) async {
     try {
-      final response = await ApiClient.instance()
+      final response = await ApiClient()
           .post(_refreshToken, data: {"refresh_token": refreshToken});
       final data = response.data;
       _token = Token.fromJson(data);
       _loggedInStatus = Status.LoggedIn;
-      UserPreference().saveToken(_token);
+      Get.find<UserPreference>().saveToken(_token);
     } on DioError catch (e) {
       _loggedInStatus = Status.NotLoggedIn;
       setError(e);

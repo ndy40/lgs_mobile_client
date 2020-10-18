@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lgs_mobile_client/screens/settings_screen.dart';
 import 'package:lgs_mobile_client/styles.dart';
 
 class ShoppingListScreen extends StatelessWidget {
@@ -22,7 +23,7 @@ class _ShoppingListScreenState extends State<_ShoppingListScreen> {
     _ActiveShopping(),
     _MyShoppingLists(),
     _Socials(),
-    _Settings()
+    SettingsScreen()
   ];
 
   _onItemTap(int index) {
@@ -99,15 +100,6 @@ class _Socials extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Text('Social screens'),
-    );
-  }
-}
-
-class _Settings extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Text('settings'),
     );
   }
 }
