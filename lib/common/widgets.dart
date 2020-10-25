@@ -1,7 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:lgs_mobile_client/models/shopping.dart';
+import 'package:lgs_mobile_client/models/models.dart';
 import 'package:lgs_mobile_client/styles.dart';
 
 RaisedButton appRaisedButton(String text, Function callback,

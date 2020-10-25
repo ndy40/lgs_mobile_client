@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
 import 'package:lgs_mobile_client/common/widgets.dart';
-import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/models/models.dart';
 import 'package:lgs_mobile_client/providers/auth.dart';
 import 'package:lgs_mobile_client/screens/login_screen.dart';
 import 'package:lgs_mobile_client/styles.dart';

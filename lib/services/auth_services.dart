@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/models/models.dart';
 import 'package:lgs_mobile_client/services/http_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +21,7 @@ class AuthService extends GetxService {
     return AuthService(apiClient: ApiClient());
   }
 
-  Future<Token> signIn(LoginModel login) async {
+  Future<Token> signIn(Login login) async {
     final payload = {'username': login.email, 'password': login.password};
     final response = await apiClient.post(_loginPath, data: payload);
 
@@ -30,7 +30,7 @@ class AuthService extends GetxService {
 
   Future<User> register(RegistrationModel model) async {
     final response =
-        await apiClient.post(_registrationPath, data: model.getJson());
+        await apiClient.post(_registrationPath, data: model.toJson());
     return User.fromJson(response.data);
   }
 

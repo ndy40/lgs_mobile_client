@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
-import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/models/models.dart';
 import 'package:lgs_mobile_client/services/auth_services.dart';
 import 'package:lgs_mobile_client/services/http_client.dart';
 
@@ -36,12 +36,10 @@ class AuthProvider extends ChangeNotifier {
 
   Token get token => _token;
 
-  signIn(LoginModel loginModel) async {
+  signIn(Login Login) async {
     try {
-      final response = await ApiClient().post(_loginPath, data: {
-        "username": loginModel.email,
-        "password": loginModel.password
-      });
+      final response = await ApiClient().post(_loginPath,
+          data: {"username": Login.email, "password": Login.password});
 
       _token = Token.fromJson(response.data);
 
@@ -60,7 +58,7 @@ class AuthProvider extends ChangeNotifier {
   signUp(RegistrationModel model) async {
     try {
       final response =
-          await ApiClient().post(_registrationPath, data: model.getJson());
+          await ApiClient().post(_registrationPath, data: model.toJson());
       final data = response.data;
       _user = User(
           id: data['id'],

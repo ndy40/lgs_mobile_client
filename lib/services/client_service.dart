@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/models/models.dart';
 
 bool tokenIsValid(Token token) {
   if (token.token == null) return false;

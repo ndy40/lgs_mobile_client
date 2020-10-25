@@ -7,9 +7,11 @@ import 'package:lgs_mobile_client/screens/shopping_list_screen.dart';
 import 'package:lgs_mobile_client/services/auth_services.dart';
 import 'package:lgs_mobile_client/services/client_service.dart';
 import 'package:lgs_mobile_client/themes.dart';
+import 'package:logging/logging.dart';
 
 void main() async {
-  initServices();
+  WidgetsFlutterBinding.ensureInitialized();
+  await initServices();
   runApp(MyApp());
 }
 
@@ -54,4 +56,9 @@ class AuthBindings extends Bindings {
 initServices() async {
   await Get.putAsync(() => Future(() => UserPreference()), permanent: true);
   await Get.putAsync(() => Future(() => UserController()), permanent: true);
+
+  Logger.root.level = Level.SEVERE;
+  Logger.root.onRecord.listen((rec) {
+    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+  });
 }

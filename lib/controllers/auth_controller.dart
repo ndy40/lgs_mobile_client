@@ -1,20 +1,25 @@
+import 'package:chopper/chopper.dart' as chopper;
 import 'package:get/get.dart';
-import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/common/api_resources.dart' as api;
+import 'package:lgs_mobile_client/models/models.dart';
 import 'package:lgs_mobile_client/providers/auth.dart';
 import 'package:lgs_mobile_client/screens/login_screen.dart';
 import 'package:lgs_mobile_client/services/auth_services.dart';
 
 class AuthController extends GetxController {
-  AuthService authService = AuthService.init();
   UserPreference userPref = Get.find<UserPreference>();
   UserController userController = Get.find<UserController>();
 
-  Future<dynamic> signIn(LoginModel login) async {
+  Future<dynamic> signIn(Login login) async {
     try {
-      final token = await authService.signIn(login);
-      userPref.saveToken(token);
-      userController.setToken(token);
-      userController.status = Status.LoggedIn;
+      api.AuthService authService = api.apiClient.getService<api.AuthService>();
+      chopper.Response<Token> response = await authService.authenticate(login);
+
+      if (null != response.body) {
+        userPref.saveToken(response.body);
+        userController.setToken(response.body);
+        userController.status = Status.LoggedIn;
+      }
     } catch (e) {
       print(e);
     }
@@ -28,12 +33,11 @@ class AuthController extends GetxController {
 }
 
 class ResetPasswordController extends GetxController {
-  AuthService service;
-
-  ResetPasswordController(this.service);
+  api.AuthService authService = api.apiClient.getService<api.AuthService>();
+  api.AuthService service = api.apiClient.getService<api.AuthService>();
 
   resetPassword(String email) async {
-    return await service.resetPassword(email);
+    return await service.resetPassword(Email()..email = email);
   }
 }
 

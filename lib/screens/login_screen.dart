@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
 import 'package:lgs_mobile_client/common/widgets.dart';
 import 'package:lgs_mobile_client/controllers/auth_controller.dart';
-import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:lgs_mobile_client/models/models.dart';
 import 'package:lgs_mobile_client/providers/auth.dart';
 import 'package:lgs_mobile_client/screens/register_screen.dart';
 import 'package:lgs_mobile_client/screens/reset_password_screen.dart';
@@ -19,7 +19,6 @@ class LoginScreen extends GetWidget<AuthController> {
 
   final _formKey = GlobalKey<FormState>();
   final _scaffold = GlobalKey<ScaffoldState>();
-  final LoginModel loginModel = new LoginModel();
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +104,7 @@ class LoginScreen extends GetWidget<AuthController> {
 
   loginUser() async {
     try {
-      final loginModel = LoginModel(
+      final login = Login(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
 
@@ -113,7 +112,7 @@ class LoginScreen extends GetWidget<AuthController> {
 
       showSnackBar(_scaffold, message: "Processing...");
 
-      await controller.signIn(loginModel);
+      await controller.signIn(login);
       UserController userController = Get.find<UserController>();
 
       switch (userController.status) {
