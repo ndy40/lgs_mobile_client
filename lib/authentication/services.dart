@@ -1,50 +1,25 @@
-import 'package:dio/dio.dart';
+import 'package:chopper/chopper.dart';
 import 'package:get/get.dart';
-import 'package:lgs_mobile_client/models/models.dart';
-import 'package:lgs_mobile_client/services/http_client.dart';
+import 'package:lgs_mobile_client/authentication/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthService extends GetxService {
-  final _loginPath = '/authentication_token';
+part 'services.chopper.dart';
 
-  final _refreshToken = '/refresh_token';
+@ChopperApi()
+abstract class AuthService extends ChopperService {
+  static AuthService create([ChopperClient $client]) => _$AuthService($client);
 
-  final _registrationPath = '/api/users/register';
+  @Post(path: '/authentication_token')
+  Future<Response<Token>> authenticate(@Body() Login login);
 
-  final _resetPassword = '/api/users/reset_password';
+  @Post(path: '/api/users/reset_password')
+  Future<Response> resetPassword(@Body() Email email);
 
-  final ApiClient apiClient;
+  @Post(path: '/refresh_token')
+  Future<Response<Token>> refreshToken(@Body() RefreshToken token);
 
-  AuthService({this.apiClient});
-
-  static AuthService init() {
-    return AuthService(apiClient: ApiClient());
-  }
-
-  Future<Token> signIn(Login login) async {
-    final payload = {'username': login.email, 'password': login.password};
-    final response = await apiClient.post(_loginPath, data: payload);
-
-    return Token.fromJson(response.data);
-  }
-
-  Future<User> register(RegistrationModel model) async {
-    final response =
-        await apiClient.post(_registrationPath, data: model.toJson());
-    return User.fromJson(response.data);
-  }
-
-  Future<Token> refreshToken(String refreshToken) async {
-    final response = await apiClient
-        .post(_refreshToken, data: {'refreshToken': refreshToken});
-    return Token.fromJson(response.data);
-  }
-
-  resetPassword(String email) async {
-    Response response =
-        await apiClient.post(_resetPassword, data: {'email': email});
-    return response.statusCode == 204;
-  }
+  @Post(path: '/api/users/register')
+  Future<Response<User>> register(@Body() RegistrationModel body);
 }
 
 class UserPreference extends GetxService {

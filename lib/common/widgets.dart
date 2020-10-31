@@ -1,7 +1,6 @@
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:lgs_mobile_client/models/models.dart';
+import 'package:lgs_mobile_client/shopping/models.dart';
 import 'package:lgs_mobile_client/styles.dart';
 
 RaisedButton appRaisedButton(String text, Function callback,
@@ -25,11 +24,12 @@ SizedBox spaceSizeBox({double height: 26.0}) {
 }
 
 buildShoppingListItemCard(ShoppingList shoppingList) {
-  return Badge(
-      badgeContent: Text("2"),
-      child: ListTile(
-        leading: Icon(Icons.shopping_basket),
-        title: Text(shoppingList.title),
-        subtitle: Text(shoppingList.createdAt.toIso8601String()),
-      ));
+  return ListTile(
+    leading: Icon(Icons.shopping_basket),
+    title: Text(shoppingList.title),
+    subtitle: Text(shoppingList.createdAt.toIso8601String()),
+    trailing: IconButton(
+      icon: Icon(Icons.more_vert_sharp),
+    ),
+  );
 }

@@ -1,30 +1,15 @@
 import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
-import 'package:lgs_mobile_client/screens/login_screen.dart';
-import 'package:lgs_mobile_client/screens/register_screen.dart';
-import 'package:lgs_mobile_client/screens/reset_password_screen.dart';
-import 'package:lgs_mobile_client/screens/shopping_list_screen.dart';
-import 'package:lgs_mobile_client/services/auth_services.dart';
+import 'package:lgs_mobile_client/authentication/screens.dart';
+import 'package:lgs_mobile_client/shopping/screens.dart';
 
 final routes = [
   GetPage(name: RegistrationScreen.routeName, page: () => RegistrationScreen()),
+  GetPage(name: LoginScreen.routeName, page: () => LoginScreen()),
   GetPage(
-      name: LoginScreen.routeName,
-      page: () => LoginScreen(),
-      binding: AuthBindings()),
-  GetPage(
-      name: ResetPasswordScreen.routeName,
-      page: () => ResetPasswordScreen(),
-      bindings: [AuthBindings()]),
+      name: ResetPasswordScreen.routeName, page: () => ResetPasswordScreen()),
   GetPage(
     name: ShoppingListScreen.routeName,
     page: () => ShoppingListScreen(),
   ),
 ];
-
-class AuthBindings extends Bindings {
-  @override
-  void dependencies() {
-    Get.put(AuthService.init());
-  }
-}

@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lgs_mobile_client/controllers/auth_controller.dart';
+import 'package:lgs_mobile_client/Authentication/screens.dart';
+import 'package:lgs_mobile_client/authentication/controllers.dart';
+import 'package:lgs_mobile_client/authentication/services.dart';
+import 'package:lgs_mobile_client/common/services.dart';
 import 'package:lgs_mobile_client/routes.dart';
-import 'package:lgs_mobile_client/screens/login_screen.dart';
-import 'package:lgs_mobile_client/screens/shopping_list_screen.dart';
-import 'package:lgs_mobile_client/services/auth_services.dart';
-import 'package:lgs_mobile_client/services/client_service.dart';
+import 'package:lgs_mobile_client/shopping/controllers.dart';
+import 'package:lgs_mobile_client/shopping/screens.dart';
 import 'package:lgs_mobile_client/themes.dart';
 import 'package:logging/logging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
+
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((rec) {
+    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+  });
+
   runApp(MyApp());
 }
 
@@ -56,9 +63,6 @@ class AuthBindings extends Bindings {
 initServices() async {
   await Get.putAsync(() => Future(() => UserPreference()), permanent: true);
   await Get.putAsync(() => Future(() => UserController()), permanent: true);
-
-  Logger.root.level = Level.SEVERE;
-  Logger.root.onRecord.listen((rec) {
-    print('${rec.level.name}: ${rec.time}: ${rec.message}');
-  });
+  await Get.putAsync(() => Future(() => ShoppingListController()),
+      permanent: true);
 }
