@@ -8,7 +8,7 @@ import 'package:lgs_mobile_client/authentication/services.dart';
 import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
 import 'package:lgs_mobile_client/common/widgets.dart';
-import 'package:lgs_mobile_client/shopping/screens.dart';
+import 'package:lgs_mobile_client/home.dart';
 import 'package:lgs_mobile_client/styles.dart';
 
 checkNotEmpty(value, fieldName) {
@@ -128,7 +128,7 @@ class LoginScreen extends GetWidget<AuthController> {
       switch (userController.status) {
         case Status.LoggedIn:
           _formKey.currentState.reset();
-          Get.toNamed(ShoppingListScreen.routeName);
+          Get.toNamed(Home.routeName);
           break;
         default:
           Get.showSnackbar(GetBar(

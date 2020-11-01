@@ -23,13 +23,25 @@ SizedBox spaceSizeBox({double height: 26.0}) {
   );
 }
 
-buildShoppingListItemCard(ShoppingList shoppingList) {
+enum PopupAction { DELETE, VIEW }
+
+buildShoppingListItemCard(
+    ShoppingList shoppingList, void onDelete(ShoppingList list)) {
   return ListTile(
     leading: Icon(Icons.shopping_basket),
     title: Text(shoppingList.title),
     subtitle: Text(shoppingList.createdAt.toIso8601String()),
-    trailing: IconButton(
+    trailing: PopupMenuButton<PopupAction>(
       icon: Icon(Icons.more_vert_sharp),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: PopupAction.DELETE,
+          child: Text('Delete'),
+        )
+      ],
+      onSelected: (value) {
+        if (value == PopupAction.DELETE) onDelete(shoppingList);
+      },
     ),
   );
 }

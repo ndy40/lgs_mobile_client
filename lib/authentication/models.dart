@@ -75,7 +75,7 @@ class Token implements ConvertToJsonInterface {
   @JsonKey(name: 'refresh_token')
   String refreshToken;
 
-  Token({@required this.token, @required this.refreshToken});
+  Token({this.token, this.refreshToken});
 
   factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
 

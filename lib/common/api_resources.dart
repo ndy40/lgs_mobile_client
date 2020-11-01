@@ -27,13 +27,16 @@ class HydraConverter extends JsonConverter {
             typeToJsonFactoryMap[InnerType]));
   }
 
-  T _convertToBodyType<T, InnerType>(
-      Map<String, dynamic> json, Function jsonParser) {
-    if (json.containsKey('@type') && json['@type'] == 'hydra:Collection') {
-      return HydraCollection<InnerType>.fromJson(json) as T;
+  T _convertToBodyType<T, InnerType>(dynamic json, Function jsonParser) {
+    if (json is Map) {
+      if (json.containsKey('@type') && json['@type'] == 'hydra:Collection') {
+        return HydraCollection<InnerType>.fromJson(json) as T;
+      }
+
+      return jsonParser(json) as T;
     }
 
-    return jsonParser(json) as T;
+    return json;
   }
 
   String _convertToJson(dynamic json) {

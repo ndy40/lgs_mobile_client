@@ -21,4 +21,13 @@ class ShoppingListController extends GetxController {
       _shoppingLists.value = value.body.members;
     });
   }
+
+  refresh() async {
+    final response = await _service.getAllResources();
+    _shoppingLists.value = response.body.members;
+  }
+
+  deleteShoppingList(int id) async {
+    return await _service.deleteResource(id);
+  }
 }
