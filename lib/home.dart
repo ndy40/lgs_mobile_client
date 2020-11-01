@@ -10,41 +10,42 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text("Lets Go Shopping", style: appTextOnPrimary)),
-      ),
-      body: Obx(() => controller.screen),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.play_circle_fill,
-              ),
-              label: "Active"),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.list_alt,
-            ),
-            label: "List",
+    return Obx(() => Scaffold(
+          appBar: AppBar(
+            title: Center(
+                child: Text("Lets Go Shopping", style: appTextOnPrimary)),
           ),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people_alt,
+          body: controller.screen,
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.play_circle_fill,
+                  ),
+                  label: "Active"),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.list_alt,
+                ),
+                label: "List",
               ),
-              label: "Social"),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.settings,
-              ),
-              label: "Settings"),
-        ],
-        currentIndex: controller.selectedIndex.value,
-        onTap: (index) {
-          controller.selectedIndex.value = index;
-        },
-        type: BottomNavigationBarType.fixed,
-      ),
-    );
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.people_alt,
+                  ),
+                  label: "Social"),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.settings,
+                  ),
+                  label: "Settings"),
+            ],
+            currentIndex: controller.selectedIndex.value,
+            onTap: (index) {
+              controller.selectedIndex.value = index;
+            },
+            type: BottomNavigationBarType.fixed,
+          ),
+        ));
   }
 }
