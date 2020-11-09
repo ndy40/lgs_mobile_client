@@ -1,7 +1,32 @@
-import 'package:lgs_mobile_client/models/auth.dart';
+import 'package:chopper/chopper.dart';
+import 'package:get/get.dart';
+import 'package:lgs_mobile_client/authentication/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserPreference {
+part 'services.chopper.dart';
+
+@ChopperApi()
+abstract class AuthService extends ChopperService {
+  static AuthService create([ChopperClient $client]) => _$AuthService($client);
+
+  @Post(path: '/authentication_token')
+  Future<Response<Token>> authenticate(@Body() Login login);
+
+  @Post(path: '/api/users/reset_password')
+  Future<Response> resetPassword(@Body() Email email);
+
+  @Post(path: '/refresh_token')
+  Future<Response<Token>> refreshToken(@Body() RefreshToken token);
+
+  @Post(path: '/api/users/register')
+  Future<Response<User>> register(@Body() RegistrationModel body);
+}
+
+class UserPreference extends GetxService {
+  Future<UserPreference> init() async {
+    return this;
+  }
+
   Future<bool> saveUser(User user) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -37,6 +62,8 @@ class UserPreference {
 
     preferences.setString('token', token.token);
     preferences.setString('refreshToken', token.refreshToken);
+
+    return true;
   }
 
   Future<String> getAccessToken() async {
@@ -57,7 +84,7 @@ class UserPreference {
     preferences.remove('refreshToken');
   }
 
-  clear() async {
+  Future<void> clear() async {
     removeUser();
     removeToken();
   }

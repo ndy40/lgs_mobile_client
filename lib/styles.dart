@@ -40,4 +40,6 @@ const appTextOnSecondary = TextStyle(
     color: Colors.white, fontSize: 12.0, fontWeight: FontWeight.normal);
 
 const appTextOnPrimary =
-    TextStyle(fontSize: 18.0, color: Colors.white, fontWeight: FontWeight.bold);
+    TextStyle(fontSize: 12.0, color: Colors.white, fontWeight: FontWeight.bold);
+
+const appTextSecondary = TextStyle(fontSize: 12, color: Colors.grey);
