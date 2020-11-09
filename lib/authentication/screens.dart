@@ -122,20 +122,18 @@ class LoginScreen extends GetWidget<AuthController> {
         message: 'Processiing...',
       ));
 
-      await controller.signIn(login);
+      Token token = await controller.signIn(login);
       UserController userController = Get.find<UserController>();
 
-      switch (userController.status) {
-        case Status.LoggedIn:
-          _formKey.currentState.reset();
-          Get.toNamed(Home.routeName);
-          break;
-        default:
-          Get.showSnackbar(GetBar(
-            title: 'Login Error',
-            message: 'Login unsuccessful',
-            duration: Duration(seconds: 5),
-          ));
+      if (token.token.isNullOrBlank) {
+        Get.showSnackbar(GetBar(
+          title: 'Login Error',
+          message: 'Login unsuccessful',
+          duration: Duration(seconds: 5),
+        ));
+      } else {
+        _formKey.currentState.reset();
+        Get.toNamed(Home.routeName);
       }
     } catch (e) {
       print(e.toString());

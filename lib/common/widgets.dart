@@ -45,3 +45,36 @@ buildShoppingListItemCard(
     ),
   );
 }
+
+class PageScaffold extends StatelessWidget {
+  final String title;
+  final int selectedNavIndex;
+  final List<Widget> body;
+  final BottomNavigationBar bottomNavigationBar;
+  final List<Widget> appBarActions;
+  final AppBar appBar;
+
+  PageScaffold({
+    @required this.title,
+    this.appBar,
+    this.body,
+    this.appBarActions,
+    this.bottomNavigationBar,
+    this.selectedNavIndex,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar,
+      body: SingleChildScrollView(child: Column(
+        children: body,
+      ),),
+      bottomNavigationBar: bottomNavigationBar,
+    );
+  }
+}
+
+abstract class HasActionButtons {
+  List<Widget> getActionButtons();
+}

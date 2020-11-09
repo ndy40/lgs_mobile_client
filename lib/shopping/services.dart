@@ -22,7 +22,7 @@ abstract class ShoppingListService extends ChopperService {
   // Future<T> getResourceByIri(String url) => client.get(url);
 
   @Post()
-  Future<Response<ShoppingList>> createResource(@Body() String data);
+  Future<Response<ShoppingList>> createResource(@Body() ShoppingList data);
 
   @Delete(path: '/{id}')
   Future<Response> deleteResource(@Path() int id);

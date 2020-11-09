@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:lgs_mobile_client/common/widgets.dart';
 import 'package:lgs_mobile_client/settings/screens.dart';
 import 'package:lgs_mobile_client/shopping/screens/active_shopping_screen.dart';
 import 'package:lgs_mobile_client/shopping/screens/shopping_list_screen.dart';
@@ -20,6 +21,14 @@ class HomeController extends GetxController {
       _index.value = index;
     } else
       _index.value = MyShoppingLists.routeName;
+  }
+
+  List<Widget> actionButtons() {
+    if (screen is HasActionButtons) {
+      return (screen as HasActionButtons).getActionButtons();
+    }
+
+    return null;
   }
 
   @override

@@ -39,6 +39,13 @@ class ShoppingList implements ConvertToJsonInterface {
   static const publishedStatus = 'PUBLISHED';
   static const closedStatus = 'CLOSED';
 
+  static const statuses = [
+    draftStatus,
+    templateStatus,
+    publishedStatus,
+    closedStatus
+  ];
+
   int id;
   String status;
   String channelId;
