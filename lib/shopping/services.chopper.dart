@@ -35,7 +35,7 @@ class _$ShoppingListService extends ShoppingListService {
   }
 
   @override
-  Future<Response<ShoppingList>> createResource(String data) {
+  Future<Response<ShoppingList>> createResource(ShoppingList data) {
     final $url = '/api/shopping_lists';
     final $body = data;
     final $request = Request('POST', $url, client.baseUrl, body: $body);

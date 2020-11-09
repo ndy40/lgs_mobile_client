@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lgs_mobile_client/Authentication/screens.dart';
 import 'package:lgs_mobile_client/authentication/controllers.dart';
+import 'package:lgs_mobile_client/authentication/screens.dart';
 import 'package:lgs_mobile_client/authentication/services.dart';
 import 'package:lgs_mobile_client/common/controller.dart';
 import 'package:lgs_mobile_client/common/services.dart';
@@ -62,7 +62,7 @@ class AuthBindings extends Bindings {
 }
 
 initServices() async {
-  await Get.putAsync(() => Future(() => UserPreference()), permanent: true);
+  await Get.putAsync(() => Future(() => UserPreference()));
   await Get.putAsync(() => Future(() => UserController()), permanent: true);
   await Get.putAsync(() => Future(() => ShoppingListController()),
       permanent: true);

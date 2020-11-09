@@ -9,7 +9,7 @@ class AuthController extends GetxController {
   UserPreference userPref = Get.find<UserPreference>();
   UserController userController = Get.find<UserController>();
 
-  Future<dynamic> signIn(Login login) async {
+  Future<Token> signIn(Login login) async {
     try {
       AuthService authService = apiClient.getService<AuthService>();
       chopper.Response<Token> response = await authService.authenticate(login);
@@ -19,9 +19,13 @@ class AuthController extends GetxController {
         userController.setToken(response.body);
         userController.status = Status.LoggedIn;
       }
+
+      return response.body;
     } catch (e) {
       print(e);
     }
+
+    return null;
   }
 
   signOut() {
