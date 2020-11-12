@@ -110,7 +110,6 @@ class LoginScreen extends GetWidget<AuthController> {
   }
 
   loginUser() async {
-    try {
       final login = Login(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
@@ -134,9 +133,6 @@ class LoginScreen extends GetWidget<AuthController> {
         _formKey.currentState.reset();
         Get.toNamed(Home.routeName);
       }
-    } catch (e) {
-      print(e.toString());
-    }
   }
 
   checkNotEmpty(value, fieldName) {
