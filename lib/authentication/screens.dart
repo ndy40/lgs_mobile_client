@@ -4,8 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/authentication/controllers.dart';
 import 'package:lgs_mobile_client/authentication/models.dart';
-import 'package:lgs_mobile_client/authentication/repositories.dart';
-import 'package:lgs_mobile_client/common/api_resources.dart';
+import 'package:lgs_mobile_client/authentication/services.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
 import 'package:lgs_mobile_client/common/widgets.dart';
 import 'package:lgs_mobile_client/home.dart';
@@ -191,8 +190,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   doSubmit() {
     if (_formKey.currentState.validate()) {
-      showSnackBar(_scaffold,
-          message: "Processing ...", duration: const Duration(seconds: 5));
+      Get.showSnackbar(GetBar(
+        key: _scaffold,
+        message: "Processing ...",
+      ));
     }
     _submit();
   }
@@ -272,10 +273,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: emailController.text.trim(),
         password: passwordController.text.trim());
 
-    final authProvider = apiClient.getService<AuthRepository>();
+    final authProvider = Get.find<AuthService>();
     final response = await authProvider.register(user);
 
-    if (response.body.isEmpty) {
+    if (response == null) {
       showSnackBar(_scaffold, message: 'Error registering');
     } else {
       _formKey.currentState.reset();
