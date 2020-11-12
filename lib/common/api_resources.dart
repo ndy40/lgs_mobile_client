@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chopper/chopper.dart';
 import 'package:get/get.dart' as getx;
 import 'package:lgs_mobile_client/authentication/models.dart';
+import 'package:lgs_mobile_client/authentication/repositories.dart';
 import 'package:lgs_mobile_client/authentication/services.dart';
 import 'package:lgs_mobile_client/common/utils.dart';
 import 'package:lgs_mobile_client/shopping/models.dart';
@@ -55,7 +56,7 @@ class AuthInterceptor extends RequestInterceptor {
       'content-type': 'application/ld+json',
     };
 
-    final token = await getx.Get.find<UserPreference>().getAccessToken();
+    final token = await getx.Get.find<UserPreferenceService>().getAccessToken();
 
     if (null != token) {
       params['Authorization'] = 'Bearer $token';
@@ -70,7 +71,7 @@ final apiClient = ChopperClient(
     services: [
       ShoppingListService.create(),
       ShoppingItemService.create(),
-      AuthService.create()
+      AuthRepository.create()
     ],
     interceptors: [HttpLoggingInterceptor(), AuthInterceptor()],
     converter: HydraConverter({

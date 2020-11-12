@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/authentication/controllers.dart';
 import 'package:lgs_mobile_client/authentication/models.dart';
-import 'package:lgs_mobile_client/authentication/services.dart';
+import 'package:lgs_mobile_client/authentication/repositories.dart';
 import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:lgs_mobile_client/common/shareable.dart';
 import 'package:lgs_mobile_client/common/widgets.dart';
@@ -119,19 +119,19 @@ class LoginScreen extends GetWidget<AuthController> {
       _formKey.currentState.save();
 
       Get.showSnackbar(GetBar(
-        message: 'Processiing...',
+        message: 'Processing...',
       ));
 
       Token token = await controller.signIn(login);
       UserController userController = Get.find<UserController>();
 
-      if (token.token.isNullOrBlank) {
+      if (token == null) {
         Get.showSnackbar(GetBar(
           title: 'Login Error',
           message: 'Login unsuccessful',
           duration: Duration(seconds: 5),
         ));
-      } else {
+      } else if (userController.status == Status.LoggedIn) {
         _formKey.currentState.reset();
         Get.toNamed(Home.routeName);
       }
@@ -272,7 +272,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: emailController.text.trim(),
         password: passwordController.text.trim());
 
-    final authProvider = apiClient.getService<AuthService>();
+    final authProvider = apiClient.getService<AuthRepository>();
     final response = await authProvider.register(user);
 
     if (response.body.isEmpty) {

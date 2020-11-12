@@ -12,14 +12,14 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(AuthController(), permanent: true);
+    AuthController controller = Get.find();
 
     return Center(
       child: Column(
         children: [
           Text('Settings Page'),
           appRaisedButton('Sign Out', () {
-            Get.find<AuthController>().signOut();
+            controller.signOut();
           }),
         ],
       ),

@@ -11,9 +11,10 @@ import 'package:lgs_mobile_client/shopping/controllers.dart';
 import 'package:lgs_mobile_client/themes.dart';
 import 'package:logging/logging.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await initServices();
+
+  initServices();
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((rec) {
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
       theme: appTheme,
       getPages: routes,
       home: FutureBuilder(
-        future: Get.find<UserPreference>().getToken(),
+        future: Get.find<UserPreferenceService>().getToken(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
               if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else if (!tokenIsValid(snapshot.data)) {
-                UserPreference().clear();
+                UserPreferenceService().clear();
                 return LoginScreen();
               }
               return Home();
@@ -57,14 +58,16 @@ class MyApp extends StatelessWidget {
 class AuthBindings extends Bindings {
   @override
   void dependencies() {
-    Get.put(AuthController());
+    final authService = Get.put(AuthService());
+    final userPref = Get.put(UserPreferenceService());
+    Get.put(AuthController(authService, userPref));
   }
 }
 
-initServices() async {
-  await Get.putAsync(() => Future(() => UserPreference()));
-  await Get.putAsync(() => Future(() => UserController()), permanent: true);
-  await Get.putAsync(() => Future(() => ShoppingListController()),
-      permanent: true);
-  await Get.putAsync(() => Future(() => HomeController()), permanent: true);
+initServices() {
+  Get.lazyPut<UserPreferenceService>(() => UserPreferenceService());
+  Get.lazyPut<UserController>(() => UserController(), fenix: true);
+  Get.lazyPut<ShoppingListController>(() => ShoppingListController(),
+      fenix: true);
+  Get.lazyPut<HomeController>(() => HomeController());
 }

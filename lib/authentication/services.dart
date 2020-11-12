@@ -1,32 +1,10 @@
-import 'package:chopper/chopper.dart';
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/authentication/models.dart';
+import 'package:lgs_mobile_client/authentication/repositories.dart';
+import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-part 'services.chopper.dart';
-
-@ChopperApi()
-abstract class AuthService extends ChopperService {
-  static AuthService create([ChopperClient $client]) => _$AuthService($client);
-
-  @Post(path: '/authentication_token')
-  Future<Response<Token>> authenticate(@Body() Login login);
-
-  @Post(path: '/api/users/reset_password')
-  Future<Response> resetPassword(@Body() Email email);
-
-  @Post(path: '/refresh_token')
-  Future<Response<Token>> refreshToken(@Body() RefreshToken token);
-
-  @Post(path: '/api/users/register')
-  Future<Response<User>> register(@Body() RegistrationModel body);
-}
-
-class UserPreference extends GetxService {
-  Future<UserPreference> init() async {
-    return this;
-  }
-
+class UserPreferenceService extends GetxService {
   Future<bool> saveUser(User user) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -87,5 +65,29 @@ class UserPreference extends GetxService {
   Future<void> clear() async {
     removeUser();
     removeToken();
+  }
+}
+
+class AuthService extends GetxService {
+  final authRepository = apiClient.getService<AuthRepository>();
+
+  Future<Token> authenticate(Login login) async {
+    final response = await authRepository.authenticate(login);
+    return response.body;
+  }
+
+  Future<bool> resetPassword(Email email) async {
+    final response = await authRepository.resetPassword(email);
+    return response.statusCode == 204;
+  }
+
+  Future<Token> refreshToken(RefreshToken token) async {
+    final response = await authRepository.refreshToken(token);
+    return response.body;
+  }
+
+  Future<User> register(RegistrationModel registrationModel) async {
+    final response = await authRepository.register(registrationModel);
+    return response.body;
   }
 }
