@@ -4,15 +4,16 @@ import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:lgs_mobile_client/common/widgets.dart';
 import 'package:lgs_mobile_client/shopping/controllers.dart';
 import 'package:lgs_mobile_client/shopping/models.dart';
-import 'package:lgs_mobile_client/shopping/services.dart';
+import 'package:lgs_mobile_client/shopping/repositories.dart';
 import 'package:lgs_mobile_client/styles.dart';
 
 class AddShoppingListScreen extends StatelessWidget {
   static const routeName = '/add_shopping_list';
 
   final AddShoppingListController _controller = Get.find();
+  final ShoppingListController _shoppingListController = Get.find();
 
-  final appService = apiClient.getService<ShoppingListService>();
+  final appService = apiClient.getService<ShoppingListRepository>();
 
   final _appBar = AppBar(
     title: Container(
@@ -38,12 +39,15 @@ class AddShoppingListScreen extends StatelessWidget {
             Expanded(
               child: appRaisedButton('Create', () async {
                 try {
-                  final resp =
-                      await appService.createResource(_controller.shoppingList);
-                  print(resp.body);
+                  final shoppingList =
+                      await _controller.save(_controller.shoppingList);
+                  if (shoppingList is ShoppingList)
+                    await _shoppingListController.refresh();
                   Get.back();
                 } catch (e) {
-                  print(e);
+                  Get.showSnackbar(GetBar(
+                    message: 'Error saving Shopping List',
+                  ));
                 }
               }),
             )
@@ -75,44 +79,41 @@ class ShoppingListCard extends StatelessWidget {
       children: [
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: this.shoppingListName,
-                  decoration: InputDecoration(
-                      hintText: "Enter shopping list title",
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: lgsPrimaryColour))),
-                  onChanged: (value) {
-                    _controller.shoppingList.title = value;
-                    _controller.shoppingList = _controller.shoppingList;
-                  },
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Obx(() => DropdownButton<String>(
-                        value: selectedStatus.value,
-                        items: statuses.value
-                            .map<DropdownMenuItem<String>>(
-                                (e) => DropdownMenuItem<String>(
-                                      value: e,
-                                      child: Text(e),
-                                    ))
-                            .toList(),
-                        onChanged: (value) {
-                          selectedStatus.value = value;
-                          _controller.shoppingList.status = value;
-                          _controller.shoppingList = _controller.shoppingList;
-                        },
-                      )),
-                ),
-              ],
-            ),
-          ),
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: this.shoppingListName,
+                    decoration: InputDecoration(
+                        hintText: "Enter shopping list title",
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: lgsPrimaryColour))),
+                    onChanged: (value) {
+                      _controller.setTitle(value);
+                    },
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Obx(() => DropdownButton<String>(
+                          value: selectedStatus.value,
+                          items: statuses.value
+                              .map<DropdownMenuItem<String>>(
+                                  (e) => DropdownMenuItem<String>(
+                                        value: e,
+                                        child: Text(e),
+                                      ))
+                              .toList(),
+                          onChanged: (value) {
+                            selectedStatus.value = value;
+                            _controller.setStatus(value);
+                          },
+                        )),
+                  ),
+                ],
+              )),
         ),
       ],
     );

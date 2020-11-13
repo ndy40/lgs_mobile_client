@@ -8,6 +8,7 @@ import 'package:lgs_mobile_client/common/services.dart';
 import 'package:lgs_mobile_client/home.dart';
 import 'package:lgs_mobile_client/routes.dart';
 import 'package:lgs_mobile_client/shopping/controllers.dart';
+import 'package:lgs_mobile_client/shopping/services.dart';
 import 'package:lgs_mobile_client/themes.dart';
 import 'package:logging/logging.dart';
 
@@ -65,9 +66,10 @@ class AuthBindings extends Bindings {
 }
 
 initServices() {
+  final service = Get.put(ShoppingListService());
   Get.lazyPut<UserPreferenceService>(() => UserPreferenceService());
   Get.lazyPut<UserController>(() => UserController(), fenix: true);
-  Get.lazyPut<ShoppingListController>(() => ShoppingListController(),
+  Get.lazyPut<ShoppingListController>(() => ShoppingListController(service),
       fenix: true);
   Get.lazyPut<HomeController>(() => HomeController());
 }

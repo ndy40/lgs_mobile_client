@@ -7,7 +7,7 @@ import 'package:lgs_mobile_client/authentication/repositories.dart';
 import 'package:lgs_mobile_client/authentication/services.dart';
 import 'package:lgs_mobile_client/common/utils.dart';
 import 'package:lgs_mobile_client/shopping/models.dart';
-import 'package:lgs_mobile_client/shopping/services.dart';
+import 'package:lgs_mobile_client/shopping/repositories.dart';
 
 class HydraConverter extends JsonConverter {
   final Map<Type, Function> typeToJsonFactoryMap;
@@ -41,11 +41,15 @@ class HydraConverter extends JsonConverter {
   }
 
   String _convertToJson(dynamic json) {
-    if (json is ConvertToJsonInterface) {
-      return jsonEncode(json.toJson());
-    }
+    String result = '';
 
-    return json;
+    if (json is ConvertToJsonInterface) {
+      print(json.toJson());
+      result = JsonEncoder().convert(json.toJson());
+    } else {
+      result = json as String;
+    }
+    return result;
   }
 }
 
@@ -69,8 +73,8 @@ class AuthInterceptor extends RequestInterceptor {
 final apiClient = ChopperClient(
     baseUrl: 'https://lsg.ndifreke-ekott.com',
     services: [
-      ShoppingListService.create(),
-      ShoppingItemService.create(),
+      ShoppingListRepository.create(),
+      ShoppingItemRepository.create(),
       AuthRepository.create()
     ],
     interceptors: [HttpLoggingInterceptor(), AuthInterceptor()],

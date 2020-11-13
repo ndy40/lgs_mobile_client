@@ -5,6 +5,7 @@ import 'package:lgs_mobile_client/common/controller.dart';
 import 'package:lgs_mobile_client/home.dart';
 import 'package:lgs_mobile_client/shopping/controllers.dart';
 import 'package:lgs_mobile_client/shopping/screens/AddShoppingListScreen.dart';
+import 'package:lgs_mobile_client/shopping/services.dart';
 
 final routes = [
   GetPage(name: RegistrationScreen.routeName, page: () => RegistrationScreen()),
@@ -21,13 +22,16 @@ final routes = [
 class AddShoppingBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(AddShoppingListController());
+    final service = Get.put<ShoppingListService>(ShoppingListService());
+    Get.put(AddShoppingListController(service));
   }
 }
 
 class HomeBindings extends Bindings {
   @override
   void dependencies() {
+    final shoppingListService = Get.put(ShoppingListService());
+    Get.lazyPut(() => ShoppingListController(shoppingListService));
     Get.put(HomeController(), permanent: true);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart' as js;
 import 'package:lgs_mobile_client/common/utils.dart';
-import 'package:lgs_mobile_client/shopping/services.dart';
+import 'package:lgs_mobile_client/shopping/repositories.dart';
 
 part 'models.g.dart';
 

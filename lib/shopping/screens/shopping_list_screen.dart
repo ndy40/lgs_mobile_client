@@ -1,4 +1,3 @@
-import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart' as getx;
@@ -24,12 +23,10 @@ class MyShoppingLists extends StatelessWidget implements HasActionButtons {
                 itemBuilder: (context, position) {
                   return buildShoppingListItemCard(
                       controller.shoppingLists[position], (value) async {
-                    final Response response =
+                    final response =
                         await controller.deleteShoppingList(value.id);
 
-                    if (response.statusCode == 204) {
-                      controller.refresh();
-                    }
+                    if (response == true) await controller.refresh();
                   });
                 },
               ),
