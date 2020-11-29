@@ -11,15 +11,9 @@ class ShoppingListController extends GetxController {
 
   ShoppingListController(this._service);
 
-  @override
-  void onInit() async {
-    final response = await _service.getAll();
-    _shoppingLists.value = response.isEmpty ? [] : response;
-  }
-
   refresh() async {
-    final response = await _service.getAll();
-    _shoppingLists.value = response;
+    final response = await _service.getCollection();
+    _shoppingLists.assignAll(response.members);
   }
 
   deleteShoppingList(int id) async {

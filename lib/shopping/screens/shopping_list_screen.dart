@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart' as getx;
 import 'package:lgs_mobile_client/common/widgets.dart';
+import 'package:lgs_mobile_client/shopping/bloc/shopping_lists_bloc.dart';
 import 'package:lgs_mobile_client/shopping/controllers.dart';
 import 'package:lgs_mobile_client/shopping/screens/AddShoppingListScreen.dart';
 
@@ -16,24 +18,35 @@ class MyShoppingLists extends StatelessWidget implements HasActionButtons {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: getx.Obx(() => RefreshIndicator(
-              child: ListView.builder(
-                itemCount: controller.shoppingLists.length,
-                itemBuilder: (context, position) {
-                  return buildShoppingListItemCard(
-                      controller.shoppingLists[position], (value) async {
-                    final response =
-                        await controller.deleteShoppingList(value.id);
+    BlocProvider.of<ShoppingListsBloc>(context).add(ShoppingListsFetchInitial());
+    return BlocBuilder<ShoppingListsBloc, ShoppingListsState>(
+        builder: (context, state) {
+          if (state is ShoppingListsLoaded) {
+            final ShoppingListsLoaded currentState = state;
+            return SafeArea(
+                child: RefreshIndicator(
+                  child: ListView.builder(
+                    itemCount: currentState.collection.totalItems,
+                    itemBuilder: (context, position) {
+                      return buildShoppingListItemCard(
+                          currentState.collection.members[position], (value) async {
+                            //TODO: to delete shopping list
+                        // final response =
+                        // await controller.deleteShoppingList(value.id);
+                        //
+                        // if (response == true) await controller.refresh();
+                      });
+                    },
+                  ),
+                  onRefresh: () async {
+                    //TODO: refresh on pull
+                  },
+                ));
+          }
 
-                    if (response == true) await controller.refresh();
-                  });
-                },
-              ),
-              onRefresh: () async {
-                await controller.refresh();
-              },
-            )));
+          return Text('No shopping list created');
+
+    });
   }
 
   @override

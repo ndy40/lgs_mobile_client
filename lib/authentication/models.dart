@@ -60,12 +60,16 @@ class RegistrationModel implements ConvertToJsonInterface {
 @JsonSerializable()
 class Login implements ConvertToJsonInterface {
   @JsonKey(name: 'username')
-  String email;
-  String password;
+  final String email;
+  final String password;
 
-  Login({this.email, this.password});
+  const Login({this.email, this.password});
 
   Map<String, dynamic> toJson() => _$LoginToJson(this);
+
+  Login copyWith({String email, String password}) {
+    return Login(email: email ?? this.email, password: password ?? this.password);
+  }
 }
 
 @JsonSerializable()
@@ -80,6 +84,10 @@ class Token implements ConvertToJsonInterface {
   factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$TokenToJson(this);
+
+  bool isEmpty() {
+    return token == null || token.isEmpty;
+  }
 }
 
 @JsonSerializable()
@@ -87,7 +95,7 @@ class RefreshToken implements ConvertToJsonInterface {
   @JsonKey(name: 'refresh_token')
   String refreshToken;
 
-  RefreshToken();
+  RefreshToken({this.refreshToken});
 
   factory RefreshToken.fromJson(Map<String, dynamic> json) =>
       _$RefreshTokenFromJson(json);
@@ -95,3 +103,11 @@ class RefreshToken implements ConvertToJsonInterface {
   @override
   Map<String, dynamic> toJson() => _$RefreshTokenToJson(this);
 }
+
+enum AuthenticationStatus {
+  unknown,
+  authenticated,
+  unauthenticated,
+}
+
+enum RegistrationStatus { initial, successful, error }

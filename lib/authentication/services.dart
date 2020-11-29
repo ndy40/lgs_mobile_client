@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
+import 'package:lgs_mobile_client/authentication/exceptions.dart';
 import 'package:lgs_mobile_client/authentication/models.dart';
 import 'package:lgs_mobile_client/authentication/repositories.dart';
 import 'package:lgs_mobile_client/common/api_resources.dart';
@@ -68,12 +71,17 @@ class UserPreferenceService extends GetxService {
   }
 }
 
-class AuthService extends GetxService {
+class AuthService {
   final authRepository = apiClient.getService<AuthRepository>();
 
   Future<Token> authenticate(Login login) async {
     final response = await authRepository.authenticate(login);
-    return response.body;
+
+    if (response.body is Token) {
+      return response.body;
+    }
+
+    throw AuthenticationFailedException();
   }
 
   Future<bool> resetPassword(Email email) async {

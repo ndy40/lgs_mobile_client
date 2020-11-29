@@ -65,7 +65,9 @@ Map<String, dynamic> _$TokenToJson(Token instance) => <String, dynamic>{
     };
 
 RefreshToken _$RefreshTokenFromJson(Map<String, dynamic> json) {
-  return RefreshToken()..refreshToken = json['refresh_token'] as String;
+  return RefreshToken(
+    refreshToken: json['refresh_token'] as String,
+  );
 }
 
 Map<String, dynamic> _$RefreshTokenToJson(RefreshToken instance) =>

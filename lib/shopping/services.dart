@@ -1,15 +1,16 @@
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/common/api_resources.dart';
+import 'package:lgs_mobile_client/common/utils.dart';
 import 'package:lgs_mobile_client/shopping/models.dart';
 import 'package:lgs_mobile_client/shopping/repositories.dart';
 
 class ShoppingListService extends GetxService {
   final _repository = apiClient.getService<ShoppingListRepository>();
 
-  Future<List<ShoppingList>> getAll({Map<String, dynamic> filter}) async {
+  Future<HydraCollection<ShoppingList>> getCollection({Map<String, dynamic> filter}) async {
     final shoppingLists = await _repository.getAllResources(query: filter);
 
-    return shoppingLists.body.members;
+    return shoppingLists.body;
   }
 
   Future<ShoppingList> create(ShoppingList shoppingList) async {

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/authentication/models.dart';
-import 'package:lgs_mobile_client/authentication/screens.dart';
+import 'package:lgs_mobile_client/authentication/screens/screens.dart';
 import 'package:lgs_mobile_client/authentication/services.dart';
 
 class AuthController extends GetxController {
