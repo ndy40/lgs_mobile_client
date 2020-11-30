@@ -20,7 +20,7 @@ class Home extends StatelessWidget {
                 child: Text(titleLists.value[controller.selectedIndex.value],
                     style: appTextOnPrimary.copyWith(
                         fontSize: 20.0, fontWeight: FontWeight.bold))),
-            actions: controller.actionButtons(),
+            actions: controller.actionButtons(context),
           ),
           body: Obx(() => controller.screen),
           bottomNavigationBar: buildBottomNavigatiom(

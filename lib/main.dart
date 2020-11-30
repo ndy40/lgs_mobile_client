@@ -11,6 +11,7 @@ import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:lgs_mobile_client/common/controller.dart';
 import 'package:lgs_mobile_client/home.dart';
 import 'package:lgs_mobile_client/routes.dart';
+import 'package:lgs_mobile_client/settings/bloc/signout_cubit.dart';
 import 'package:lgs_mobile_client/shopping/bloc/shopping_lists_bloc.dart';
 import 'package:lgs_mobile_client/shopping/controllers.dart';
 import 'package:lgs_mobile_client/shopping/services.dart';
@@ -27,15 +28,29 @@ void main() {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
   });
 
-  runApp(MyApp(apiClient.getService<AuthRepository>()));
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  final AuthRepository repo;
-  final _navigatorKey = GlobalKey<NavigatorState>();
-  NavigatorState get navigatorKey => _navigatorKey.currentState;
+class MyApp extends StatefulWidget {
 
-  MyApp(this.repo);
+  MyApp();
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  AuthRepository repo;
+  NavigatorState get navigatorKey => _navigatorKey.currentState;
+  AuthenticationBloc authenticationBloc;
+
+  @override
+  void initState() {
+    repo = apiClient.getService<AuthRepository>();
+    authenticationBloc = AuthenticationBloc(repo);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +63,10 @@ class MyApp extends StatelessWidget {
               create: (context) => LoginCubit(AuthService())
           ),
           BlocProvider<AuthenticationBloc>(
-              create: (BuildContext context) => AuthenticationBloc(repo)..add(AuthenticationStateChanged(status: AuthenticationUnknownState()))),
+              create: (BuildContext context) => authenticationBloc..add(AuthenticationStateChanged(status: AuthenticationUnknownState()))),
           BlocProvider<ShoppingListsBloc>(
           create: (context) => ShoppingListsBloc(service: ShoppingListService()),),
+          BlocProvider<SignoutCubit>(create: (context) => SignoutCubit(authService: AuthService())),
         ],
         child: MaterialApp(
           navigatorKey: _navigatorKey,
@@ -60,7 +76,9 @@ class MyApp extends StatelessWidget {
           builder: (context, child) => BlocListener<AuthenticationBloc, AuthenticationState>(
               listener: (context, state) {
                 if (state is UnAuthenticatedState) {
-                  Get.toNamed(LoginScreen.routeName);
+                  navigatorKey.pushReplacementNamed(LoginScreen.routeName);
+                } else if (state is AuthenticatedState) {
+                  navigatorKey.pushReplacementNamed(Home.routeName);
                 }
               },
               child: child,
@@ -68,6 +86,12 @@ class MyApp extends StatelessWidget {
         )
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    authenticationBloc.close();
+    super.dispose();
   }
 }
 

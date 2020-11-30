@@ -32,6 +32,8 @@ dependencies:
   logging:
   flutter_bloc: ^6.1.1
   equatable: ^1.2.5
+  freezed_annotation:
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -43,6 +45,7 @@ dev_dependencies:
   chopper_generator:  ^3.0.6
   json_serializable:
   build_runner:
+  freezed: ^0.12.3
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

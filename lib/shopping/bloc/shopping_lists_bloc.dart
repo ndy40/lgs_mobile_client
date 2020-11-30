@@ -19,7 +19,7 @@ class ShoppingListsBloc extends Bloc<ShoppingListsEvent, ShoppingListsState> {
     ShoppingListsEvent event,
   ) async* {
 
-    if (event is ShoppingListsFetchInitial) {
+    if (event is ShoppingListsFetchStarted) {
       yield* _mapShoppingListsFetchToState(event);
     }
   }

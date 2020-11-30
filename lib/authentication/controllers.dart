@@ -23,9 +23,9 @@ class AuthController extends GetxController {
   }
 
   signOut() {
+    print('cleared');
     _userPreferenceService.clear();
     userController.clear();
-    Get.toNamed(LoginScreen.routeName);
   }
 }
 
@@ -33,7 +33,7 @@ class ResetPasswordController extends GetxController {
   AuthService authService = Get.find<AuthService>();
 
   Future<bool> resetPassword(String email) async {
-    return await authService.resetPassword(Email()..email = email);
+    return await authService.resetPassword(Email(email: email));
   }
 }
 

@@ -18,11 +18,18 @@ class MyShoppingLists extends StatelessWidget implements HasActionButtons {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<ShoppingListsBloc>(context).add(ShoppingListsFetchInitial());
+    BlocProvider.of<ShoppingListsBloc>(context).add(ShoppingListsFetchStarted());
+
     return BlocBuilder<ShoppingListsBloc, ShoppingListsState>(
+      buildWhen: (previous, current) => previous != current,
         builder: (context, state) {
           if (state is ShoppingListsLoaded) {
             final ShoppingListsLoaded currentState = state;
+
+            if (currentState.collection.totalItems < 1) {
+              return Text('No shopping list created');
+            }
+
             return SafeArea(
                 child: RefreshIndicator(
                   child: ListView.builder(
@@ -30,27 +37,22 @@ class MyShoppingLists extends StatelessWidget implements HasActionButtons {
                     itemBuilder: (context, position) {
                       return buildShoppingListItemCard(
                           currentState.collection.members[position], (value) async {
-                            //TODO: to delete shopping list
-                        // final response =
-                        // await controller.deleteShoppingList(value.id);
-                        //
-                        // if (response == true) await controller.refresh();
+                        BlocProvider.of<ShoppingListsBloc>(context).add(ShoppingListDeleted(shoppingList: value));
                       });
                     },
                   ),
                   onRefresh: () async {
-                    //TODO: refresh on pull
+                    BlocProvider.of<ShoppingListsBloc>(context).add(ShoppingListsFetchStarted());
                   },
                 ));
           }
 
-          return Text('No shopping list created');
-
+          return Center(child: CircularProgressIndicator(),);
     });
   }
 
   @override
-  List<Widget> getActionButtons() {
+  List<Widget> getActionButtons(BuildContext context) {
     return [
       IconButton(
         icon: const Icon(
@@ -58,7 +60,7 @@ class MyShoppingLists extends StatelessWidget implements HasActionButtons {
           color: Colors.white,
         ),
         tooltip: 'Create Shopping List',
-        onPressed: () => getx.Get.toNamed(AddShoppingListScreen.routeName),
+        onPressed: () => Navigator.of(context).pushNamed(AddShoppingListScreen.routeName),
       )
     ];
   }

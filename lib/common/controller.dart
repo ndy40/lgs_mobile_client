@@ -23,9 +23,9 @@ class HomeController extends GetxController {
       _index.value = MyShoppingLists.routeName;
   }
 
-  List<Widget> actionButtons() {
+  List<Widget> actionButtons(BuildContext context) {
     if (screen is HasActionButtons) {
-      return (screen as HasActionButtons).getActionButtons();
+      return (screen as HasActionButtons).getActionButtons(context);
     }
 
     return null;

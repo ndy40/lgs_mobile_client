@@ -29,18 +29,18 @@ class AuthenticationBloc
   @override
   Stream<AuthenticationState> mapEventToState(
       AuthenticationEvent event) async* {
-    if (state is AuthenticationUnknownState) {
-      yield* _attemptLogin();
-    } else if (state is AuthenticationStateChanged) {
+    if (event is AuthenticationStateChanged) {
       yield* _mapAuthenticationStateChangedToState(event);
+    } else {
+      yield state;
     }
   }
 
   Stream<AuthenticationState> _mapAuthenticationStateChangedToState(AuthenticationStateChanged event) async* {
     if (event.status is AuthenticationUnknownState) {
-      yield AuthenticationUnknownState();
-    } else if (event.status is AuthenticatedState){
-      yield AuthenticatedState(token: (event.status as AuthenticatedState).token);
+      yield* _attemptLogin();
+    } else {
+      yield event.status;
     }
   }
 
@@ -52,7 +52,7 @@ class AuthenticationBloc
         if (tokenIsValid(token)) {
           yield AuthenticatedState(token: token);
           this.add(AuthenticationStateChanged(status: AuthenticatedState(token: token)));
-        } else if (!token.isEmpty()) {
+        } else if (!token.token.isNullOrBlank) {
           userPref.removeToken();
 
           final Response<Token> response = await _service
@@ -93,7 +93,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(state: LoginFormState.submissionInProgress));
       final Token authToken = await _service.authenticate(state.login);
       emit(state.copyWith(state: LoginFormState.success, token: authToken));
-
+      emit(state.copyWith(state: LoginFormState.initial));
     }  on AuthenticationFailedException {
         emit(state.copyWith(state: LoginFormState.failure));
     }

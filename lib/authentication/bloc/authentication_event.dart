@@ -17,8 +17,6 @@ class AuthenticationStateChanged extends AuthenticationEvent {
   List<Object> get props => [status];
 }
 
-class AuthenticationLogoutRequested extends AuthenticationEvent {}
-
 // password reset events
 abstract class PasswordResetEvent extends Equatable {
   const PasswordResetEvent();

@@ -6,14 +6,6 @@ part of 'models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Email _$EmailFromJson(Map<String, dynamic> json) {
-  return Email()..email = json['email'] as String;
-}
-
-Map<String, dynamic> _$EmailToJson(Email instance) => <String, dynamic>{
-      'email': instance.email,
-    };
-
 User _$UserFromJson(Map<String, dynamic> json) {
   return User(
     id: json['id'] as int,
@@ -40,37 +32,47 @@ Map<String, dynamic> _$RegistrationModelToJson(RegistrationModel instance) =>
       'password': instance.password,
     };
 
-Login _$LoginFromJson(Map<String, dynamic> json) {
-  return Login(
+_$_Email _$_$_EmailFromJson(Map<String, dynamic> json) {
+  return _$_Email(
+    email: json['email'] as String,
+  );
+}
+
+Map<String, dynamic> _$_$_EmailToJson(_$_Email instance) => <String, dynamic>{
+      'email': instance.email,
+    };
+
+_$_Login _$_$_LoginFromJson(Map<String, dynamic> json) {
+  return _$_Login(
     email: json['username'] as String,
     password: json['password'] as String,
   );
 }
 
-Map<String, dynamic> _$LoginToJson(Login instance) => <String, dynamic>{
+Map<String, dynamic> _$_$_LoginToJson(_$_Login instance) => <String, dynamic>{
       'username': instance.email,
       'password': instance.password,
     };
 
-Token _$TokenFromJson(Map<String, dynamic> json) {
-  return Token(
+_$_Token _$_$_TokenFromJson(Map<String, dynamic> json) {
+  return _$_Token(
     token: json['token'] as String,
     refreshToken: json['refresh_token'] as String,
   );
 }
 
-Map<String, dynamic> _$TokenToJson(Token instance) => <String, dynamic>{
+Map<String, dynamic> _$_$_TokenToJson(_$_Token instance) => <String, dynamic>{
       'token': instance.token,
       'refresh_token': instance.refreshToken,
     };
 
-RefreshToken _$RefreshTokenFromJson(Map<String, dynamic> json) {
-  return RefreshToken(
+_$_RefreshToken _$_$_RefreshTokenFromJson(Map<String, dynamic> json) {
+  return _$_RefreshToken(
     refreshToken: json['refresh_token'] as String,
   );
 }
 
-Map<String, dynamic> _$RefreshTokenToJson(RefreshToken instance) =>
+Map<String, dynamic> _$_$_RefreshTokenToJson(_$_RefreshToken instance) =>
     <String, dynamic>{
       'refresh_token': instance.refreshToken,
     };

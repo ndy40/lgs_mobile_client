@@ -22,17 +22,27 @@ checkNotEmpty(value, fieldName) {
   return null;
 }
 
-class LoginScreen extends GetWidget<AuthController> {
+class LoginScreen extends StatefulWidget  {
   static const routeName = '/login';
 
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
   final _scaffold = GlobalKey<ScaffoldState>();
+  AuthenticationBloc authBloc;
 
   @override
   Widget build(BuildContext context) {
+    authBloc = BlocProvider.of<AuthenticationBloc>(context);
+
     return Scaffold(
       key: _scaffold,
       body: Center(
@@ -47,17 +57,21 @@ class LoginScreen extends GetWidget<AuthController> {
 
   buildLoginForm(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
+        listenWhen: (previous, current) => previous.state != current.state,
         listener: (context, state) async {
           if (state.state == LoginFormState.submissionInProgress) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(const SnackBar(
-                content: Text('Processing ...'),
-              ));
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Processing ...'),
+            ));
           } else if (state.state == LoginFormState.success) {
             Get.find<UserPreferenceService>().saveToken(state.token);
-            context.read<AuthenticationBloc>().add(AuthenticationStateChanged(
-                status: AuthenticatedState(token: state.token)));
+            authBloc.add(AuthenticationStateChanged(status: AuthenticatedState(token: state.token)));
+          } else if (state.state == LoginFormState.failure) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Row(children: [Icon(Icons.error, color: Colors.red,), SizedBox(width: 5,), Text('Login failed')])
+            ));
           }
         },
         child: Container(
@@ -79,7 +93,7 @@ class LoginScreen extends GetWidget<AuthController> {
                     style: TextStyle(color: Colors.grey),
                   ),
                   onPressed: () {
-                    Get.toNamed(ResetPasswordScreen.routeName);
+                    Navigator.of(context).pushReplacementNamed(ResetPasswordScreen.routeName);
                   },
                 )
               ],
@@ -100,7 +114,7 @@ class LoginScreen extends GetWidget<AuthController> {
                 TextButton(
                   child: Text('Register'),
                   onPressed: () {
-                    Get.toNamed(RegistrationScreen.routeName);
+                    Navigator.of(context).pushReplacementNamed(RegistrationScreen.routeName);
                   },
                 )
               ],
@@ -172,7 +186,7 @@ class _LoginButton extends StatelessWidget {
         buildWhen: (previous, current) => previous.state != current.state,
         builder: (context, state) {
             return state.state == LoginFormState.submissionInProgress
-                ? const CircularProgressIndicator()
+                ? const Center(child: CircularProgressIndicator(), widthFactor: 2,)
                 : appRaisedButton("SIGN IN", () {
                       context.read<LoginCubit>().authenticate();
                   });

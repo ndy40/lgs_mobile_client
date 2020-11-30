@@ -21,7 +21,10 @@ import 'package:lgs_mobile_client/shopping/services.dart';
 
 final routes = {
   Home.routeName : (context) => Home(),
-  LoginScreen.routeName: (context) => LoginScreen()
+  LoginScreen.routeName: (context) => LoginScreen(),
+  AddShoppingListScreen.routeName: (context) => AddShoppingListScreen(),
+  ResetPasswordScreen.routeName: (context) => ResetPasswordScreen(),
+  RegistrationScreen.routeName: (context) => RegistrationScreen()
 };
 
 
