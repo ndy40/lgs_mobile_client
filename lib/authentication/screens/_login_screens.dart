@@ -63,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('Processing ...'),
+              backgroundColor: Colors.grey,
             ));
           } else if (state.state == LoginFormState.success) {
             Get.find<UserPreferenceService>().saveToken(state.token);

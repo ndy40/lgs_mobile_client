@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/authentication/bloc/authentication.dart';
 import 'package:lgs_mobile_client/authentication/controllers.dart';
-import 'package:lgs_mobile_client/authentication/models.dart';
 import 'package:lgs_mobile_client/authentication/repositories.dart';
 import 'package:lgs_mobile_client/authentication/screens/screens.dart';
 import 'package:lgs_mobile_client/authentication/services.dart';
 import 'package:lgs_mobile_client/common/api_resources.dart';
-import 'package:lgs_mobile_client/common/controller.dart';
 import 'package:lgs_mobile_client/home.dart';
 import 'package:lgs_mobile_client/routes.dart';
 import 'package:lgs_mobile_client/settings/bloc/signout_cubit.dart';
@@ -110,11 +108,9 @@ void initServices() {
   Get.lazyPut<UserController>(() => UserController(), fenix: true);
   Get.lazyPut<ShoppingListController>(() => ShoppingListController(service),
       fenix: true);
-  Get.lazyPut<HomeController>(() => HomeController());
   final authService = Get.put(AuthService());
   final userPref = Get.put(UserPreferenceService());
   Get.put(AuthController(authService, userPref));
   final shoppingListService = Get.put(ShoppingListService());
   Get.lazyPut(() => ShoppingListController(shoppingListService));
-  Get.put(HomeController(), permanent: true);
 }
