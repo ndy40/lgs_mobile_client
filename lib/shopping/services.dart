@@ -1,71 +1,26 @@
-import 'package:chopper/chopper.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:lgs_mobile_client/common/utils.dart';
 import 'package:lgs_mobile_client/shopping/models.dart';
+import 'package:lgs_mobile_client/shopping/repositories.dart';
 
-part 'services.chopper.dart';
+class ShoppingListService extends GetxService {
+  final _repository = apiClient.getService<ShoppingListRepository>();
 
-@ChopperApi(baseUrl: '/api/shopping_lists')
-abstract class ShoppingListService extends ChopperService {
-  static ShoppingListService create([ChopperClient client]) =>
-      _$ShoppingListService(client);
+  Future<HydraCollection<ShoppingList>> getCollection({Map<String, dynamic> filter}) async {
+    final shoppingLists = await _repository.getAllResources(query: filter);
 
-  @Get()
-  Future<Response<HydraCollection<ShoppingList>>> getAllResources(
-      {@QueryMap() Map<String, dynamic> query});
+    return shoppingLists.body;
+  }
 
-  @Get(path: '/{id}')
-  Future<Response<ShoppingList>> getResource(@Path() int id,
-      [@QueryMap() Map<String, dynamic> query]);
+  Future<ShoppingList> create(ShoppingList shoppingList) async {
+    final response = await _repository.createResource(shoppingList);
+    return response.body;
+  }
 
-  // Future<T> getResourceByIri(String url) => client.get(url);
+  Future<bool> delete(int id) async {
+    final response = await _repository.deleteResource(id);
 
-  @Post()
-  Future<Response<ShoppingList>> createResource(@Body() ShoppingList data);
-
-  @Delete(path: '/{id}')
-  Future<Response> deleteResource(@Path() int id);
-
-  @Patch(path: '/{id}')
-  Future<Response<ShoppingList>> patchResource(
-      @Path() int id, @Body() Map<String, dynamic> body);
-
-  @Post(path: '/{id}')
-  Future<Response<ShoppingList>> putResource(
-      @Path() int id, @Body() Map<String, dynamic> body);
-}
-
-@ChopperApi(baseUrl: '/api/shopping_items')
-abstract class ShoppingItemService extends ChopperService {
-  static ShoppingItemService create([ChopperClient client]) =>
-      _$ShoppingItemService(client);
-  @Get()
-  Future<Response<HydraCollection<ShoppingItem>>> getAllResources(
-      {@QueryMap() Map<String, dynamic> $query, @Header() header});
-
-  @Get(path: '/{id}')
-  Future<Response<ShoppingItem>> getResource(@Path() int id);
-
-  @Post()
-  Future<Response<ShoppingItem>> createResource(@Body() ShoppingItem data);
-
-  @Delete(path: '/{id}')
-  Future<Response> deleteResource(@Path() int id);
-
-  @Patch(path: '/{id}')
-  Future<Response<ShoppingItem>> patchResource(
-      @Path() int id, @Body() Map<String, dynamic> body);
-
-  @Post(path: '/{id}')
-  Future<Response<ShoppingItem>> putResource(
-      @Path() int id, @Body() Map<String, dynamic> body);
-}
-
-/// Utility method for fetching ShoppingItem resource using IRI
-Future<Response<ShoppingItem>> getItemByIri(String url) async {
-  final matched = RegExp(r'(\d+)$').stringMatch(url);
-  return await apiClient
-      .getService<ShoppingItemService>()
-      .getResource(int.parse(matched));
+    return response.statusCode == 204;
+  }
 }

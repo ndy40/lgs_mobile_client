@@ -1,20 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'services.dart';
+part of 'repositories.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
 // ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations
-class _$ShoppingListService extends ShoppingListService {
-  _$ShoppingListService([ChopperClient client]) {
+class _$ShoppingListRepository extends ShoppingListRepository {
+  _$ShoppingListRepository([ChopperClient client]) {
     if (client == null) return;
     this.client = client;
   }
 
   @override
-  final definitionType = ShoppingListService;
+  final definitionType = ShoppingListRepository;
 
   @override
   Future<Response<HydraCollection<ShoppingList>>> getAllResources(
@@ -69,14 +69,14 @@ class _$ShoppingListService extends ShoppingListService {
 }
 
 // ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations
-class _$ShoppingItemService extends ShoppingItemService {
-  _$ShoppingItemService([ChopperClient client]) {
+class _$ShoppingItemRepository extends ShoppingItemRepository {
+  _$ShoppingItemRepository([ChopperClient client]) {
     if (client == null) return;
     this.client = client;
   }
 
   @override
-  final definitionType = ShoppingItemService;
+  final definitionType = ShoppingItemRepository;
 
   @override
   Future<Response<HydraCollection<ShoppingItem>>> getAllResources(

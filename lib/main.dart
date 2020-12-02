@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:lgs_mobile_client/authentication/bloc/authentication.dart';
 import 'package:lgs_mobile_client/authentication/controllers.dart';
-import 'package:lgs_mobile_client/authentication/screens.dart';
+import 'package:lgs_mobile_client/authentication/repositories.dart';
+import 'package:lgs_mobile_client/authentication/screens/screens.dart';
 import 'package:lgs_mobile_client/authentication/services.dart';
-import 'package:lgs_mobile_client/common/controller.dart';
-import 'package:lgs_mobile_client/common/services.dart';
+import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:lgs_mobile_client/home.dart';
 import 'package:lgs_mobile_client/routes.dart';
+import 'package:lgs_mobile_client/settings/bloc/signout_cubit.dart';
+import 'package:lgs_mobile_client/shopping/bloc/shopping_lists_bloc.dart';
 import 'package:lgs_mobile_client/shopping/controllers.dart';
+import 'package:lgs_mobile_client/shopping/services.dart';
 import 'package:lgs_mobile_client/themes.dart';
 import 'package:logging/logging.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await initServices();
+
+  initServices();
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((rec) {
@@ -23,48 +29,88 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+
+  MyApp();
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  AuthRepository repo;
+  NavigatorState get navigatorKey => _navigatorKey.currentState;
+  AuthenticationBloc authenticationBloc;
+
+  @override
+  void initState() {
+    repo = apiClient.getService<AuthRepository>();
+    authenticationBloc = AuthenticationBloc(repo);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      initialBinding: AuthBindings(),
-      title: 'Flutter Demo',
-      theme: appTheme,
-      getPages: routes,
-      home: FutureBuilder(
-        future: Get.find<UserPreference>().getToken(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return CircularProgressIndicator();
-            default:
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (!tokenIsValid(snapshot.data)) {
-                UserPreference().clear();
-                return LoginScreen();
-              }
-              return Home();
-          }
-        },
+
+    return RepositoryProvider.value(
+      value: repo,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<LoginCubit>(
+              create: (context) => LoginCubit(AuthService())
+          ),
+          BlocProvider<AuthenticationBloc>(
+              create: (BuildContext context) => authenticationBloc..add(AuthenticationStateChanged(status: AuthenticationUnknownState()))),
+          BlocProvider<ShoppingListsBloc>(
+          create: (context) => ShoppingListsBloc(service: ShoppingListService()),),
+          BlocProvider<SignoutCubit>(create: (context) => SignoutCubit(authService: AuthService())),
+        ],
+        child: MaterialApp(
+          navigatorKey: _navigatorKey,
+          title: 'Flutter Demo',
+          theme: appTheme,
+          routes: routes,
+          builder: (context, child) => BlocListener<AuthenticationBloc, AuthenticationState>(
+              listener: (context, state) {
+                if (state is UnAuthenticatedState) {
+                  navigatorKey.pushReplacementNamed(LoginScreen.routeName);
+                } else if (state is AuthenticatedState) {
+                  navigatorKey.pushReplacementNamed(Home.routeName);
+                }
+              },
+              child: child,
+            )
+        )
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    authenticationBloc.close();
+    super.dispose();
   }
 }
 
 class AuthBindings extends Bindings {
   @override
   void dependencies() {
-    Get.put(AuthController());
+    final authService = Get.put(AuthService());
+    final userPref = Get.put(UserPreferenceService());
+    Get.put(AuthController(authService, userPref));
   }
 }
 
-initServices() async {
-  await Get.putAsync(() => Future(() => UserPreference()));
-  await Get.putAsync(() => Future(() => UserController()), permanent: true);
-  await Get.putAsync(() => Future(() => ShoppingListController()),
-      permanent: true);
-  await Get.putAsync(() => Future(() => HomeController()), permanent: true);
+void initServices() {
+  final service = Get.put(ShoppingListService());
+  Get.lazyPut<UserPreferenceService>(() => UserPreferenceService());
+  Get.lazyPut<UserController>(() => UserController(), fenix: true);
+  Get.lazyPut<ShoppingListController>(() => ShoppingListController(service),
+      fenix: true);
+  final authService = Get.put(AuthService());
+  final userPref = Get.put(UserPreferenceService());
+  Get.put(AuthController(authService, userPref));
+  final shoppingListService = Get.put(ShoppingListService());
+  Get.lazyPut(() => ShoppingListController(shoppingListService));
 }

@@ -76,5 +76,5 @@ class PageScaffold extends StatelessWidget {
 }
 
 abstract class HasActionButtons {
-  List<Widget> getActionButtons();
+  List<Widget> getActionButtons(BuildContext context);
 }

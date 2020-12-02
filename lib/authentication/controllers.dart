@@ -1,46 +1,39 @@
-import 'package:chopper/chopper.dart' as chopper;
 import 'package:get/get.dart';
 import 'package:lgs_mobile_client/authentication/models.dart';
-import 'package:lgs_mobile_client/authentication/screens.dart';
+import 'package:lgs_mobile_client/authentication/screens/screens.dart';
 import 'package:lgs_mobile_client/authentication/services.dart';
-import 'package:lgs_mobile_client/common/api_resources.dart';
 
 class AuthController extends GetxController {
-  UserPreference userPref = Get.find<UserPreference>();
+  AuthService _authService;
+  UserPreferenceService _userPreferenceService;
+
   UserController userController = Get.find<UserController>();
 
+  AuthController(this._authService, this._userPreferenceService);
+
   Future<Token> signIn(Login login) async {
-    try {
-      AuthService authService = apiClient.getService<AuthService>();
-      chopper.Response<Token> response = await authService.authenticate(login);
+    final token = await _authService.authenticate(login);
 
-      if (null != response.body) {
-        userPref.saveToken(response.body);
-        userController.setToken(response.body);
-        userController.status = Status.LoggedIn;
-      }
-
-      return response.body;
-    } catch (e) {
-      print(e);
+    if (!token.token.isNull) {
+      _userPreferenceService.saveToken(token);
+      userController.status = Status.LoggedIn;
     }
 
-    return null;
+    return token;
   }
 
   signOut() {
-    userPref.clear();
+    print('cleared');
+    _userPreferenceService.clear();
     userController.clear();
-    Get.toNamed(LoginScreen.routeName);
   }
 }
 
 class ResetPasswordController extends GetxController {
-  AuthService authService = apiClient.getService<AuthService>();
-  AuthService service = apiClient.getService<AuthService>();
+  AuthService authService = Get.find<AuthService>();
 
-  resetPassword(String email) async {
-    return await service.resetPassword(Email()..email = email);
+  Future<bool> resetPassword(String email) async {
+    return await authService.resetPassword(Email(email: email));
   }
 }
 
@@ -61,11 +54,11 @@ class UserController extends GetxController {
 
   @override
   void onInit() {
-    Get.find<UserPreference>().getUser().then((value) => setUser(value));
+    Get.find<UserPreferenceService>().getUser().then((value) => setUser(value));
   }
 
   setUser(User user) async {
-    if (!await Get.find<UserPreference>().saveUser(user)) {
+    if (!await Get.find<UserPreferenceService>().saveUser(user)) {
       throw Exception("Error saving user");
     }
 
@@ -73,7 +66,7 @@ class UserController extends GetxController {
   }
 
   setToken(Token token) async {
-    if (!await Get.find<UserPreference>().saveToken(token)) {
+    if (!await Get.find<UserPreferenceService>().saveToken(token)) {
       throw Exception('Error saving token');
     }
 

@@ -1,20 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'services.dart';
+part of 'repositories.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
 // ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations
-class _$AuthService extends AuthService {
-  _$AuthService([ChopperClient client]) {
+class _$AuthRepository extends AuthRepository {
+  _$AuthRepository([ChopperClient client]) {
     if (client == null) return;
     this.client = client;
   }
 
   @override
-  final definitionType = AuthService;
+  final definitionType = AuthRepository;
 
   @override
   Future<Response<Token>> authenticate(Login login) {

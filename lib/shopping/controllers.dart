@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:lgs_mobile_client/common/api_resources.dart';
 import 'package:lgs_mobile_client/shopping/models.dart';
 import 'package:lgs_mobile_client/shopping/services.dart';
 
@@ -10,31 +9,27 @@ class ShoppingListController extends GetxController {
 
   ShoppingListService _service;
 
-  ShoppingListController() {
-    _service = apiClient.getService<ShoppingListService>();
-  }
-
-  @override
-  void onInit() {
-    _service.getAllResources().then((value) {
-      _shoppingLists.value = value.body.members;
-    }).catchError((onError) => _shoppingLists.value = <ShoppingList>[]);
-  }
+  ShoppingListController(this._service);
 
   refresh() async {
-    final response = await _service.getAllResources();
-    _shoppingLists.value = response.body.members;
+    final response = await _service.getCollection();
+    _shoppingLists.assignAll(response.members);
   }
 
   deleteShoppingList(int id) async {
-    return await _service.deleteResource(id);
+    return await _service.delete(id);
   }
 }
 
 class AddShoppingListController extends GetxController {
-  Rx<ShoppingList> _shoppingList = ShoppingList().obs;
+  Rx<ShoppingList> _shoppingList =
+      ShoppingList(status: ShoppingList.draftStatus, shoppingItems: []).obs;
 
   ShoppingList get shoppingList => _shoppingList.value;
+
+  ShoppingListService _service;
+
+  AddShoppingListController(this._service);
 
   set shoppingList(ShoppingList shoppingList) =>
       _shoppingList.value = shoppingList;
@@ -43,10 +38,18 @@ class AddShoppingListController extends GetxController {
 
   List<String> get shoppingListStatuses => _shoppingListStatuses.value;
 
-  final ShoppingListService service =
-      apiClient.getService<ShoppingListService>();
+  void setStatus(String status) {
+    _shoppingList.value.status = status;
+  }
 
-  void save(ShoppingList shoppingList) async {}
+  void setTitle(String title) {
+    _shoppingList.value.title = title;
+  }
+
+  Future<ShoppingList> save(ShoppingList shoppingList) async {
+    final response = await _service.create(shoppingList);
+    return response;
+  }
 
   void addItem(ShoppingItem shoppingItem) async {}
 }
